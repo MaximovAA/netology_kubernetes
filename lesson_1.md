@@ -64,12 +64,16 @@
 1. Установить MicroK8S на локальную машину или на удалённую виртуальную машину.
 2. Установить dashboard.
 3. Сгенерировать сертификат для подключения к внешнему ip-адресу.
-
+![Инструкция](https://github.com/MaximovAA/school/blob/main/kub-status.jpg)
+![Инструкция](https://github.com/MaximovAA/school/blob/main/kub-kubectl.jpg)
+![Инструкция](https://github.com/MaximovAA/school/blob/main/kub-nodes2.jpg)
 ------
 
 ### Задание 2. Установка и настройка локального kubectl
 1. Установить на локальную машину kubectl.
 2. Настроить локально подключение к кластеру.
 3. Подключиться к дашборду с помощью port-forward.
-
+![Инструкция](https://github.com/MaximovAA/school/blob/main/kub-kubectl!.jpg)
+![Инструкция](https://github.com/MaximovAA/school/blob/main/kub-dashboard.jpg)
+![Инструкция](https://github.com/MaximovAA/school/blob/main/kub-nodes.jpg)
 ------
