@@ -42,7 +42,7 @@
    ![netology-web](https://github.com/MaximovAA/school/blob/main/kub2netology-web.jpg)
    ![curl](https://github.com/MaximovAA/school/blob/main/kub2netology-webcurl.jpg)
 
-   ```yaml
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -68,9 +68,9 @@ spec:
     image: gcr.io/kubernetes-e2e-test-images/echoserver:2.2
     ports:
     - containerPort: 80
-   ```
+```
    
-   ```yaml
+```yaml
    apiVersion: v1
 kind: Service
 metadata:
@@ -102,7 +102,7 @@ spec:
 #  clusterIP: None
   selector:
     app: netology-web
-   ```
+```
 ------
 
 ### Правила приёма работы
