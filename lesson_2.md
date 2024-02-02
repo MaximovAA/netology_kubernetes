@@ -26,7 +26,9 @@
 1. Создать манифест (yaml-конфигурацию) Pod.
 2. Использовать image - gcr.io/kubernetes-e2e-test-images/echoserver:2.2.
 3. Подключиться локально к Pod с помощью `kubectl port-forward` и вывести значение (curl или в браузере).
-
+   ![apply](https://github.com/MaximovAA/school/blob/main/kub2apply.jpg)
+   ![helloworld](https://github.com/MaximovAA/school/blob/main/kub2helloworld.jpg)
+   ![curl](https://github.com/MaximovAA/school/blob/main/kub2helloworld-curl.jpg)
 ------
 
 ### Задание 2. Создать Service и подключить его к Pod
@@ -36,6 +38,71 @@
 3. Создать Service с именем netology-svc и подключить к netology-web.
 4. Подключиться локально к Service с помощью `kubectl port-forward` и вывести значение (curl или в браузере).
 
+   ![k9s](https://github.com/MaximovAA/school/blob/main/kub2k9s.jpg)
+   ![netology-web](https://github.com/MaximovAA/school/blob/main/kub2netology-web.jpg)
+   ![curl](https://github.com/MaximovAA/school/blob/main/kub2netology-webcurl.jpg)
+
+   ```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-world
+  labels:
+     app: hello-world
+spec:
+  containers:
+  - name: hello-world
+    image: gcr.io/kubernetes-e2e-test-images/echoserver:2.2
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: netology-web
+  labels:
+     app: netology-web
+spec:
+  containers:
+  - name: netology-web
+    image: gcr.io/kubernetes-e2e-test-images/echoserver:2.2
+    ports:
+    - containerPort: 80
+   ```
+   
+   ```yaml
+   apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world
+  labels:
+    app: hello-world
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: 80
+#   clusterIP: None
+  selector:
+    app: hello-world
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netology-web
+  labels:
+    app: netology-web
+spec:
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: 80
+#  clusterIP: None
+  selector:
+    app: netology-web
+   ```
 ------
 
 ### Правила приёма работы
