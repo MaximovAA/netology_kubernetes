@@ -71,7 +71,7 @@ spec:
 ```
    
 ```yaml
-   apiVersion: v1
+apiVersion: v1
 kind: Service
 metadata:
   name: hello-world
