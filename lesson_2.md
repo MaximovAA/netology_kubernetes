@@ -103,6 +103,7 @@ spec:
   selector:
     app: netology-web
 ```
+    ![pods](https://github.com/MaximovAA/school/blob/main/kub2getpods.jpg)
 ------
 
 ### Правила приёма работы
