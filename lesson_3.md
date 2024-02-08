@@ -30,6 +30,65 @@
 4. Создать Service, который обеспечит доступ до реплик приложений из п.1.
 5. Создать отдельный Pod с приложением multitool и убедиться с помощью `curl`, что из пода есть доступ до приложений из п.1.
 
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kub3-deployment2.jpg)  
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kub3-service1.jpg)  
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kub3-curlpod.jpg)  
+  
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pods-deployment
+  namespace: default
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.19
+        ports:
+        - containerPort: 80
+          name: ngxport
+      - name: multitool
+        image: wbitt/network-multitool
+        env:
+          - name: HTTP_PORT
+            value: "31080"
+        ports:
+        - containerPort: 31080
+          name: mulport
+```
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngx-service
+  labels:
+    app: nginx
+spec:
+  ports:
+  - name: ngx
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: mul
+    port: 31080
+    protocol: TCP
+    targetPort: 31080
+  selector:
+    app: nginx
+```
+  
 ------
 
 ### Задание 2. Создать Deployment и обеспечить старт основного контейнера при выполнении условий
@@ -38,6 +97,58 @@
 2. Убедиться, что nginx не стартует. В качестве Init-контейнера взять busybox.
 3. Создать и запустить Service. Убедиться, что Init запустился.
 4. Продемонстрировать состояние пода до и после запуска сервиса.
+
+![Описание](https://github.com/MaximovAA/school/blob/main/kub3-init.jpg)  
+![Описание](https://github.com/MaximovAA/school/blob/main/kub3-nslookup.jpg)  
+![Описание](https://github.com/MaximovAA/school/blob/main/kub3-initdone.jpg)  
+![Описание](https://github.com/MaximovAA/school/blob/main/kuub3-service.jpg)  
+
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: init-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx:1.19.2
+        name: nginx
+        volumeMounts:
+        - name: webdata
+          mountPath: "/usr/share/nginx/html"
+      initContainers:
+      - name: init
+        image: busybox:1.28
+        command: ['sh', '-c', "until nslookup myservice.default.svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+        volumeMounts:
+        - name: webdata
+          mountPath: "/usr/share/nginx/html"
+      volumes:
+        - name: webdata
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  selector:
+    app: nginx
+```
 
 ------
 
