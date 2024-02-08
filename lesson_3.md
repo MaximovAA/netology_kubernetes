@@ -123,19 +123,10 @@ spec:
       containers:
       - image: nginx:1.19.2
         name: nginx
-        volumeMounts:
-        - name: webdata
-          mountPath: "/usr/share/nginx/html"
       initContainers:
       - name: init
         image: busybox:1.28
         command: ['sh', '-c', "until nslookup myservice.default.svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
-        volumeMounts:
-        - name: webdata
-          mountPath: "/usr/share/nginx/html"
-      volumes:
-        - name: webdata
-          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
