@@ -88,6 +88,7 @@ spec:
   selector:
     app: nginx
 ```
+
   
 ------
 
@@ -140,6 +141,7 @@ spec:
   selector:
     app: nginx
 ```
+![Описание](https://github.com/MaximovAA/school/blob/main/kub3-curlinit.jpg)
 
 ------
 
