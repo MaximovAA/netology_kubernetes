@@ -30,6 +30,63 @@
 4. Продемонстрировать доступ с помощью `curl` по доменному имени сервиса.
 5. Предоставить манифесты Deployment и Service в решении, а также скриншоты или вывод команды п.4.
 
+
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kube4-curlpods.jpg)  
+  
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pods-deployment
+  namespace: lesson4
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.19
+        ports:
+        - containerPort: 80
+          name: ngx
+      - name: multitool
+        image: wbitt/network-multitool
+        env:
+          - name: HTTP_PORT
+            value: "8080"
+        ports:
+        - containerPort: 8080
+          name: mul
+```
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngx-service
+  namespace: lesson4
+  labels:
+    app: nginx
+spec:
+  ports:
+  - name: ngx
+    port: 9001
+    protocol: TCP
+    targetPort: 80
+  - name: mul
+    port: 9002
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: nginx
+```
 ------
 
 ### Задание 2. Создать Service и обеспечить доступ к приложениям снаружи кластера
@@ -38,6 +95,28 @@
 2. Продемонстрировать доступ с помощью браузера или `curl` с локального компьютера.
 3. Предоставить манифест и Service в решении, а также скриншоты или вывод команды п.2.
 
+
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kube4-svc.jpg)    
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kub4-web30080.jpg)  
+  
+  
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+  namespace: lesson4
+spec:
+  ports:
+  - name: web
+    port: 9001
+    protocol: TCP
+    targetPort: 80
+    nodePort: 30080
+  selector:
+    app: nginx
+  type: NodePort
+```
 ------
 
 ### Правила приёма работы
