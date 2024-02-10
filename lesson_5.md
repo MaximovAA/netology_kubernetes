@@ -31,6 +31,104 @@
 4. Продемонстрировать, что приложения видят друг друга с помощью Service.
 5. Предоставить манифесты Deployment и Service в решении, а также скриншоты или вывод команды п.4.
 
+![Описание](https://github.com/MaximovAA/school/blob/main/kub5-pods.jpg)  
+![Описание](https://github.com/MaximovAA/school/blob/main/kub5-ingresscurl.jpg)  
+![Описание](https://github.com/MaximovAA/school/blob/main/kub5-curlmult.jpg)  
+
+  
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: lesson5
+  labels:
+    app: back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: back
+  template:
+    metadata:
+      labels:
+        app: back
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+        env:
+          - name: HTTP_PORT
+            value: "8080"
+        ports:
+        - containerPort: 8080
+          name: mul
+```
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: lesson5
+  labels:
+    app: front
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.19
+        ports:
+        - containerPort: 80
+          name: ngx
+```
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-service
+  namespace: lesson5
+  labels:
+    app: front
+spec:
+  ports:
+  - name: ngx
+    port: 9001
+    protocol: TCP
+    targetPort: 80
+    nodePort: 30080
+  selector:
+    app: front
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-service
+  namespace: lesson5
+  labels:
+    app: back
+spec:
+  ports:
+  - name: mul
+    port: 9002
+    protocol: TCP
+    targetPort: 8080
+    nodePort: 30808
+  selector:
+    app: back
+  type: NodePort
+```
+
+
 ------
 
 ### Задание 2. Создать Ingress и обеспечить доступ к приложениям снаружи кластера
@@ -40,6 +138,38 @@
 3. Продемонстрировать доступ с помощью браузера или `curl` с локального компьютера.
 4. Предоставить манифесты и скриншоты или вывод команды п.2.
 
+![Описание](https://github.com/MaximovAA/school/blob/main/kub5-ingress.jpg)    
+![Описание](https://github.com/MaximovAA/school/blob/main/kub5-ingresscurl.jpg)  
+
+  
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-front
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: test.exampletestingress.ru
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: front-service
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: back-service
+            port:
+              number: 8080
+```
 ------
 
 ### Правила приема работы
