@@ -34,6 +34,55 @@
 4. Продемонстрировать, что multitool может читать файл, который периодоически обновляется.
 5. Предоставить манифесты Deployment в решении, а также скриншоты или вывод команды из п. 4.
 
+
+  
+   ![Описание](https://github.com/MaximovAA/school/blob/main/kub6-pod.jpg)
+   ![Описание](https://github.com/MaximovAA/school/blob/main/kub6-cont.jpg)
+   ![Описание](https://github.com/MaximovAA/school/blob/main/kub6-catfile.jpg)
+   
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: lesson6
+  labels:
+    app: back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: back
+  template:
+    metadata:
+      labels:
+        app: back
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+#        command: ['sh', '-c', 'while true; do cat /input/success.txt; sleep 10; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /input
+        env:
+          - name: HTTP_PORT
+            value: "8080"
+        ports:
+        - containerPort: 8080
+          name: mul
+      - name: app1
+        image: busybox
+        command: ['sh', '-c', 'while true; do echo Success! >> /output/success.txt; sleep 5; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /output
+      volumes:
+      - name: vol
+        hostPath:
+          path: /var/data    
+```
+   
 ------
 
 ### Задание 2
@@ -47,6 +96,46 @@
 3. Продемонстрировать возможность чтения файла изнутри пода.
 4. Предоставить манифесты Deployment, а также скриншоты или вывод команды из п. 2.
 
+
+    ![Описание](https://github.com/MaximovAA/school/blob/main/kub6-allpods.jpg)
+   ![Описание](https://github.com/MaximovAA/school/blob/main/kub6-syslog.jpg)
+   
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: logmachine
+  namespace: lesson6
+  labels:
+    app: back
+spec:
+  selector:
+    matchLabels:
+      app: back
+  template:
+    metadata:
+      labels:
+        app: back
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+#        command: ['sh', '-c', 'while true; do cat /input/success.txt; sleep 10; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /input
+        env:
+          - name: HTTP_PORT
+            value: "8080"
+        ports:
+        - containerPort: 8080
+          name: mul
+      volumes:
+      - name: vol
+        hostPath:
+          path: /var/log
+```
+   
 ------
 
 ### Правила приёма работы
