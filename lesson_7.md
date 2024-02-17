@@ -36,6 +36,86 @@
 5. Продемонстрировать, что файл сохранился на локальном диске ноды. Удалить PV.  Продемонстрировать что произошло с файлом после удаления PV. Пояснить, почему.
 5. Предоставить манифесты, а также скриншоты или вывод необходимых команд.
 
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kub7.jpg)  
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kub7-2.jpg)  
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kub7-3.jpg)  
+  ![Описание](https://github.com/MaximovAA/school/blob/main/kub7-4.jpg)  
+```
+При удалении Deployment и PVC потеряет статус Bound, но останется существовать в системе
+После удаления PV в моем случае файл так же останется существовать, так как его наличие регламентируется политиками:
+Reclaim Policy
+Current reclaim policies are:
+  Retain -- manual reclamation
+  Recycle -- basic scrub (rm -rf /thevolume/*)
+  Delete -- delete the volume
+```
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv1
+spec:
+  capacity:
+    storage: 10Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /home/ubuntu/manifest/pv1
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-vol
+spec:
+  #storageClassName: manual
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: lesson7
+  labels:
+    app: back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: back
+  template:
+    metadata:
+      labels:
+        app: back
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+#        command: ['sh', '-c', 'while true; do cat /input/success.txt; sleep 10; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /input
+        env:
+          - name: HTTP_PORT
+            value: "8080"
+        ports:
+        - containerPort: 8080
+          name: mul
+      - name: app1
+        image: busybox
+        command: ['sh', '-c', 'while true; do echo Success! >> /output/success.txt; sleep 5; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /output
+      volumes:
+      - name: vol
+        persistentVolumeClaim:
+          claimName: pvc-vol
+```
 ------
 
 ### Задание 2
@@ -49,6 +129,60 @@
 3. Продемонстрировать возможность чтения и записи файла изнутри пода. 
 4. Предоставить манифесты, а также скриншоты или вывод необходимых команд.
 
+![Описание](https://github.com/MaximovAA/school/blob/main/kub7-5.jpg)  
+![Описание](https://github.com/MaximovAA/school/blob/main/kub7-6.jpg)  
+![Описание](https://github.com/MaximovAA/school/blob/main/kub7-7.jpg)  
+
+```
+
+```
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: lesson7
+  labels:
+    app: back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: back
+  template:
+    metadata:
+      labels:
+        app: back
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+#        command: ['sh', '-c', 'while true; do cat /input/success.txt; sleep 10; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /input
+        env:
+          - name: HTTP_PORT
+            value: "8080"
+        ports:
+        - containerPort: 8080
+          name: mul
+      volumes:
+      - name: vol
+        persistentVolumeClaim:
+          claimName: pvc-vol
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-vol
+spec:
+  storageClassName: "nfs"
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+```
 ------
 
 ### Правила приёма работы
