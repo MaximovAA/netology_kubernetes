@@ -96,9 +96,9 @@ metadata:
 spec:
   ports:
   - name: ngx
-    port: 443
+    port: 80
     protocol: TCP
-    targetPort: 443
+    targetPort: 80
     nodePort: 30080
   - name: mul
     port: 31080
