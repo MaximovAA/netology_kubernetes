@@ -30,6 +30,28 @@
 4. Предусмотрите права пользователя. Пользователь может просматривать логи подов и их конфигурацию (`kubectl logs pod <pod_id>`, `kubectl describe pod <pod_id>`).
 5. Предоставьте манифесты и скриншоты и/или вывод необходимых команд.
 
+![описание](https://github.com/MaximovAA/school/blob/main/kub9-1.jpg)  
+![описание](https://github.com/MaximovAA/school/blob/main/kub9-2.jpg)  
+![описание](https://github.com/MaximovAA/school/blob/main/kub9-3.jpg)  
+![описание](https://github.com/MaximovAA/school/blob/main/kube9-4.jpg)  
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: newuser
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods","pods/log"]
+  verbs: ["get", "watch", "list"]
+```
+```
+kubectl create rolebinding rolebindingjean --role newuser --user jean
+
+# Тут из-за того, что при создании сертификата не поменял в шаблоне пользователя,
+# microk8s видит теперь моего newuser как jean, решил не переделывать и оставить себе для истории
+# на скриншотах так же оставил выводы ошибок
+```
 ------
 
 ### Правила приёма работы
